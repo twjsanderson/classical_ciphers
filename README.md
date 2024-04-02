@@ -3,12 +3,8 @@
 ## Overview
 A collection of classical ciphers implmented in Elixir. 
 1. Caesar Cipher
-    a. Encode
-    b. Decode
 2. Rot thirteen (ROT 13) Cipher
 3. Rail Fence Cipher
-  a. Encode
-  b. Decode
 
 ## Credit
 
