@@ -1,6 +1,26 @@
 # ClassicalCiphers
 
-**TODO: Add description**
+## Overview
+A collection of classical ciphers implmented in Elixir. 
+1. Caesar Cipher
+    a. Encode
+    b. Decode
+2. Rot thirteen (ROT 13) Cipher
+3. Rail Fence Cipher
+  a. Encode
+  b. Decode
+
+## Credit
+
+Code used in this library was taken/inspired by the following solution(s):
+- [caesar cipher](https://exercism.org/tracks/elixir/exercises/simple-cipher/solutions)
+- [rails encode](https://exercism.org/tracks/elixir/exercises/rail-fence-cipher/solutions?page=1)
+- [rails decode](https://exercism.org/tracks/elixir/exercises/rail-fence-cipher/solutions/yevhenshymotiuk)
+- [Chat GPT 3.5](https://chat.openai.com/)
+
+## Tests
+
+To run tests: `mix tests`
 
 ## Installation
 

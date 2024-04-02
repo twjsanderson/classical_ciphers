@@ -6,6 +6,8 @@ defmodule ClassicalCiphers do
     b) decode
   2. rot_thirteen (ROT 13)
   3. rail_fence
+    a) encode
+    b) decode
   """
 
   defp char_shift(char, shift, code) when char in ?a..?z or char in ?A..?Z or char == 32 do
