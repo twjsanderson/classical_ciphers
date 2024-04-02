@@ -39,13 +39,10 @@ defmodule ClassicalCiphers do
     if byte_size(text) < 1 || byte_size(text) > text_length_limit do
       raise ArgumentError, message: "text length must be <= #{text_length_limit} and > 0"
     end
-    {
-      :ok,
-      text
-        |> String.to_charlist()
-        |> Enum.map(&char_shift(&1, shift, code))
-        |> to_string()
-    }
+    text
+      |> String.to_charlist()
+      |> Enum.map(&char_shift(&1, shift, code))
+      |> to_string()
   end
 
   @doc """
@@ -54,10 +51,10 @@ defmodule ClassicalCiphers do
   ## Examples
 
       iex> ClassicalCiphers.encode_caesar("hello")
-      {:ok, "khoor"}
+      "khoor"
 
       iex> ClassicalCiphers.decode_caesar("khoor")
-      {:ok, "hello"}
+      "hello"
 
   """
   def encode_caesar(text) when is_binary(text) do
@@ -74,25 +71,68 @@ defmodule ClassicalCiphers do
   ## Examples
 
       iex> ClassicalCiphers.rot_thirteen("hello")
-      {:ok, "uryyb"}
+      "uryyb"
 
       iex> ClassicalCiphers.rot_thirteen("uryyb")
-      {:ok, "hello"}
+      "hello"
 
   """
   def rot_thirteen(text) when is_binary(text) do
     text_shift(text, 13, :encode)
   end
 
-  # TODO: implement rail_fence cipher
-  # 1. create empty matrix height is # of rails, width is length of text
-  # 2. enumerate over it? start at 0,0 of matrix at first char of text
-  # 3. increase row and col by 1 (ie. [1, 1]) add next char of text
-  # 4. if row == rails (ie. last row), then subtract row (if 3 rows at [2, 2], next would be [1, 3])
-  # 5. if row == 0 (ie. first row), then add row again (if back to first row [0, 4], next would be [1, 5])
-  # def rail_fence(text, rails \\ 3) do
-  #   text_length = byte_size(text)
-  #   matrix = Matrix.create(rails, text_length)
-  # end
+  @doc """
+  encode_rail_fence Cipher
+
+  ## Examples
+
+      iex> ClassicalCiphers.encode_rail_fence("hey buffy")
+      "hbye ufyf"
+
+  """
+  def encode_rail_fence(text, rails \\ 3) do
+    Enum.concat(1..(rails - 1), rails..2)
+      |> Stream.cycle()
+      |> Stream.zip(String.graphemes(text))
+      |> Enum.sort_by(fn {rail, _} -> rail end)
+      |> Enum.map(fn {_, char} -> char end)
+      |> Enum.join("")
+  end
+
+  defp gen_cycle(rails) do
+    Enum.to_list(0..rails - 1) ++ :lists.seq(rails - 2, 0, -1)
+  end
+
+  defp gen_pattern(text, rails) do
+    rails
+      |> gen_cycle()
+      |> Enum.slice(0..-2 // 1)
+      |> List.duplicate(String.length(text))
+      |> List.flatten()
+  end
+
+  @doc """
+  decode_rail_fence Cipher
+
+  ## Examples
+
+      iex> ClassicalCiphers.decode_rail_fence("hbye ufyf")
+      "hey buffy"
+
+  """
+  def decode_rail_fence(text, rails \\ 3) do
+    pattern =
+      text
+        |> gen_pattern(rails)
+        |> Enum.take(String.length(text))
+        |> Enum.zip(0..String.length(text))
+        |> Enum.sort_by(&elem(&1, 0))
+    positions = Enum.map(pattern, &elem(&1, 1))
+    text
+      |> String.codepoints()
+      |> Enum.zip(positions)
+      |> Enum.sort_by(&elem(&1, 1))
+      |> Enum.map_join(&elem(&1, 0))
+  end
 
 end
